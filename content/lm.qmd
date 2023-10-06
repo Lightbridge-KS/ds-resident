@@ -1,0 +1,198 @@
+---
+title: "Linear Regression"
+execute: 
+  warning: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+here::i_am("content/lm.qmd")
+library(here)
+source(here("_common.R"))
+```
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+## Explore Data
+
+```{r}
+penguins <- na.omit(penguins) # Remove missing value of simplicity
+head(penguins)
+```
+
+```{r}
+glimpse(penguins)
+```
+
+```{r}
+visdat::vis_dat(penguins)
+```
+
+## Simple Linear Regression Model
+
+### Plot
+
+Let's explore a relationship between `body_mass_g` and `flipper_length_mm`. In a scatter plot ([@fig-plot-peng-scatter]), we can see that there are some kind of a linear trend.
+
+```{r fig-plot-peng-scatter}
+#| fig-cap: Scatter plot
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(color = "maroon", alpha = 0.5) 
+```
+
+### Fit Model
+
+Simple linear regression model will be fitted to the data using:
+
+-   `body_mass_g` as a numeric outcome or dependent variable (y)
+
+-   `flipper_length_mm` as a numeric predictor or independent variable (x)
+
+```{r}
+lm_simple_fit <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+summary(lm_simple_fit)
+```
+
+```{r include=FALSE}
+lm_simple_summary <- summary(lm_simple_fit)
+
+pen_simple_rsq <- round(lm_simple_summary$r.squared, 2)
+```
+
+### Coefficient interpretation
+
+Since, the simple linear regression model (one predictor) is in the form of:
+
+$$
+\hat{y} = \hat{\beta_0} + \hat{\beta_1}x
+$$
+
+-   $\hat{\beta_0}$ is the estimated intercept = -5780.8
+-   $\hat{\beta_1}$ is the estimated coefficient (slope) of the `flipper_length_mm` = 49.7
+
+Also, the p-value of these coefficients is statistically significant ($p$ \< 0.001), meaning the true value is very unlikely to be zero, so that we can include these values in the linear model equation.
+
+Therefore, the equation of this linear model that has been fitted to this data can be written as:
+
+$$
+body \ mass \ [g] = -5780.8 + 49.7 (flipper \  length \ [mm])
+$$
+
+
+
+```{r fig-plot-peng-scatter-lm}
+#| fig-cap: The fitted linear model (blue line) with confidence area (grey area) of the model's coefficient. 
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(color = "maroon", alpha = 0.5) +
+  geom_smooth(method = "lm")
+```
+
+We can explain this equation in simple terms as
+
+-   If the flipper length increase by 1 mm, the average increased in body mass would be 0.049 kg.
+
+
+### Model Performance
+
+
+
+R-squared ($R^2$) = `r pen_simple_rsq`
+
+-   This means that `r pen_simple_rsq*100` % of the variation in the outcome (`body_mass_g`) can be explained by the predictor (`flipper_length_mm`) using this simple linear regression model.
+
+-   How about the other 24% of the outcome? Some is due to random error which we can't control (irreducible error) and most importantly due to reducible error which can be improve by many machine learning techniques, let's improve our linear model the next section.
+
+## Multiple Linear Regression
+
+We will consider adding another variable `sex` in the model.
+
+### Plot
+
+First, let's see the distribution of `body_mass_g` in each `sex` ([@fig-plot-peng-scatter-sex]). As we can see, the `sex` also influence `body_mass_g`: the male penguins are, on average, heavier than female.
+
+```{r fig-plot-peng-scatter-sex}
+#| fig-cap: Scatter plot of body mass (g) VS flipper length (mm) for each sex.
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g, color = sex)) +
+  geom_point(alpha = 0.5) 
+```
+
+### Fit Model
+
+Multiple linear regression model will be fitted to the data using:
+
+-   **Outcome (y):** `body_mass_g` (numeric variable)
+
+-   **Predictors (x):**
+
+    -   `flipper_length_mm` (numeric variable)
+
+    -   `sex` (binary categorical variable) has 2 levels: male, female.
+
+```{r lm_multi_fit}
+lm_multi_fit <- lm(body_mass_g ~ flipper_length_mm + sex, data = penguins)
+summary(lm_multi_fit)
+```
+
+```{r include=FALSE}
+lm_multi_summary <- summary(lm_multi_fit)
+pen_multi_adj_rsq <- round(lm_multi_summary$adj.r.squared, 2)
+```
+
+### Coefficient interpretation
+
+General form of multiple linear regression model with two predictors can be written as:
+
+$$
+\hat{y} = \hat{\beta_0} + \hat{\beta_1}x_1 + \hat{\beta_2}x_2
+$$
+
+Where:
+
+-   $\hat{\beta_0}$ is the estimated *intercept of the female* (as baseline) = -5410.3
+-   $\hat{\beta_1}$ is the estimated slope of both lines = 47
+-   $\hat{\beta_2}$ is the estimated *vertical difference* of male relative to female = 347.9
+
+The p-value of all of the coefficients is statistically significant ($p$ \< 0.001).
+
+Therefore, the equation of this linear model that has been fitted to this data can be written as:
+
+$$
+  body \ mass \ [g] = -5410.3 + 47 (flipper \ length \ [mm]) + 347.9 (sex) \left\{
+  \begin{array}{@{}ll@{}}
+    0, & \text{if female} \\
+    1, & \text{if male}
+  \end{array}\right.
+$$
+
+As in [@fig-plot-peng-scatter-lm-sex], by including categorical predictor `sex` in the model, the single line now splits into two perpendicular lines, fitted to the male and female sex.
+
+```{r fig-plot-peng-scatter-lm-sex}
+#| fig-cap: Multiple linear regression of body mass (g) on flipper length (mm) and sex.
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g, color = sex)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm")
+```
+
+We can explain this equation in simple terms as:
+
+-   If the flipper length increase by 1 mm, the average increased in body mass would be 0.047 kg, in the same penguin sex.
+
+-   Male penguin is, on average, 0.35 kg heavier than female in the same flipper length.
+
+
+### Model Performance
+
+Adjusted R-squared ($R^2$) = **`r pen_multi_adj_rsq`**, increased from the previous model using simple linear regression ($R^2$ = `r pen_simple_rsq`) 
+
+-   This means that `r pen_multi_adj_rsq*100` % of the variation in the outcome (`body_mass_g`) can be explained by the predictors (`flipper_length_mm` and `sex`) using multiple linear regression model.
+
+
+

@@ -1,0 +1,25 @@
+project:
+  type: book
+
+book:
+  title: "Data Science for Resident"
+  author: "Kittipos Sirivongrungson"
+  date: "10/6/2023"
+  chapters:
+    - index.qmd
+    - content/lm.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    html-math-method: mathjax
+  # pdf:
+  #   documentclass: scrreprt
+
+
+execute: 
+  freeze: auto
+
