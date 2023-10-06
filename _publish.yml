@@ -1,0 +1,4 @@
+- source: project
+  netlify:
+    - id: d669a0b0-88db-4378-97a9-4c4120b2e069
+      url: 'https://ds4resident-lightbridge.netlify.app/'
