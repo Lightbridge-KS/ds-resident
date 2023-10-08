@@ -1,0 +1,16 @@
+{
+  "hash": "40016dd06ffce90615cfb7fe51a7127b",
+  "result": {
+    "markdown": "---\ntitle: \"Correlation\"\nexecute: \n  warning: false\n---\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(corrr)\nlibrary(palmerpenguins)\ntheme_set(theme_bw())\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\npenguins <- penguins |> select(where(is.numeric)) # Choose only numeric variables\n```\n:::\n\n\n## Correlation Heatmap\n\n\n::: {.cell}\n\n```{.r .cell-code}\npenguins |> \n  correlate() |> \n  shave() |> \n  rplot(print_cor = TRUE)\n```\n\n::: {.cell-output-display}\n![](cor_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n\n## Network plot\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\npenguins |> \n  correlate() |> \n  network_plot(curved = F)\n```\n\n::: {.cell-output-display}\n![](cor_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "cor_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

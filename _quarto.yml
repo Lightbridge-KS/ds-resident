@@ -7,7 +7,12 @@ book:
   date: "10/6/2023"
   chapters:
     - index.qmd
-    - content/lm.qmd
+    - part: "Modeling"
+      chapters: 
+        - content/lm.qmd
+    - part: "Statistics"
+      chapters: 
+        - content/cor.qmd
     - references.qmd
 
 bibliography: references.bib
@@ -21,4 +26,6 @@ format:
 
 execute: 
   freeze: auto
+  
+code-fold: true
 

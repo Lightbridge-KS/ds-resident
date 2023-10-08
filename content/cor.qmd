@@ -1,0 +1,42 @@
+---
+title: "Correlation"
+execute: 
+  warning: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+here::i_am("content/cor.qmd")
+library(here)
+source(here("_common.R"))
+```
+
+```{r}
+library(tidyverse)
+library(corrr)
+library(palmerpenguins)
+theme_set(theme_bw())
+```
+
+```{r}
+penguins <- penguins |> select(where(is.numeric)) # Choose only numeric variables
+```
+
+## Correlation Heatmap
+
+```{r}
+penguins |> 
+  correlate() |> 
+  shave() |> 
+  rplot(print_cor = TRUE)
+``` 
+
+## Network plot
+
+
+```{r}
+penguins |> 
+  correlate() |> 
+  network_plot(curved = F)
+``` 

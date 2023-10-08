@@ -19,14 +19,18 @@ theme_set(theme_bw())
 
 ## Explore Data
 
+`penguins` dataset has `r nrow(penguins)` rows x `r ncol(penguins)` columns. Here are the first 6 rows of the data.
+
 ```{r}
 penguins <- na.omit(penguins) # Remove missing value of simplicity
 head(penguins)
 ```
 
+
 ```{r}
-glimpse(penguins)
+gtsummary::tbl_summary(penguins)
 ```
+
 
 ```{r}
 visdat::vis_dat(penguins)
@@ -54,6 +58,7 @@ Simple linear regression model will be fitted to the data using:
 -   `flipper_length_mm` as a numeric predictor or independent variable (x)
 
 ```{r}
+#| code-fold: show
 lm_simple_fit <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
 summary(lm_simple_fit)
 ```
@@ -136,6 +141,7 @@ Multiple linear regression model will be fitted to the data using:
     -   `sex` (binary categorical variable) has 2 levels: male, female.
 
 ```{r lm_multi_fit}
+#| code-fold: show
 lm_multi_fit <- lm(body_mass_g ~ flipper_length_mm + sex, data = penguins)
 summary(lm_multi_fit)
 ```

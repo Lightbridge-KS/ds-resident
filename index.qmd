@@ -1,5 +1,6 @@
 # Preface {.unnumbered}
 
-This is a Quarto book.
-
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+::: callout-tip
+## About
+Data science, statistics, and machine learning for residency.
+:::
